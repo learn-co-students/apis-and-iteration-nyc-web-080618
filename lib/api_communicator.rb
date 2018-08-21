@@ -9,7 +9,12 @@ end
 
 def get_info_from_api(choice_and_input)
   #make the web request
-  response_string = RestClient.get("http://www.swapi.co/api/#{choice_and_input[0]}/")
+  response_string = ""
+  if choice_and_input[0] == "planets" || choice_and_input[0] == "starships"
+    response_string = RestClient.get("http://swapi.co/api/films/")
+  else
+    response_string = RestClient.get("http://www.swapi.co/api/people/")
+  end
   response_hash = JSON.parse(response_string)
 
   # NOTE: in this demonstration we name many of the variables _hash or _array.
@@ -45,11 +50,6 @@ def print_choice(choice_hash)
   choice_hash.each do |film|
     puts film["title"]
   end
-end
-
-def show_character_movies(choice_and_input)
-  films_array = get_character_movies_from_api(character)
-  print_movies(films_array)
 end
 
 ## BONUS
