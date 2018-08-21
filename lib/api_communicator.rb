@@ -2,12 +2,12 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
-def get_character_movies_from_api(character)
+def get_character_movies_from_api(choice)
   #make the web request
-  response_string = RestClient.get('http://www.swapi.co/api/people/')
+  response_string = RestClient.get("http://www.swapi.co/api/#{choice[0]}/")
   response_hash = JSON.parse(response_string)
-  
-  # NOTE: in this demonstration we name many of the variables _hash or _array. 
+
+  # NOTE: in this demonstration we name many of the variables _hash or _array.
   # This is done for educational purposes. This is not typically done in code.
 
 
@@ -20,10 +20,42 @@ def get_character_movies_from_api(character)
   # this collection will be the argument given to `parse_character_movies`
   #  and that method will do some nice presentation stuff: puts out a list
   #  of movies by title. play around with puts out other info about a given film.
+  #binding.pry
+
+
+  #######for the different choice
+  #####if they are searching by person
+  if choice[0] == "people"
+    character_films_arr = [ ]
+    response_hash["results"].each do |character_hash|
+      if character_hash["name"] == choice[1]
+        character_films_arr.push(character_hash["films"])
+      end
+    end
+
+    character_films_arr = character_films_arr.flatten
+
+
+    #now call the api for each film
+    film_info_array = character_films_arr.map do |film_url|
+      JSON.parse(RestClient.get(film_url))
+    end
+
+
+  #####if they are searching for planets
+elsif choice[0] == "planets"   
+
+  end
+
+
+
 end
 
 def print_movies(films_hash)
   # some iteration magic and puts out the movies in a nice list
+  films_hash.each do |film|
+    puts "#{film["title"]}, Episode: #{film["episode_id"]}"
+  end
 end
 
 def show_character_movies(character)
