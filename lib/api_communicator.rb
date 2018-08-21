@@ -2,15 +2,21 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
-def get_character_movies_from_api(character)
+def show_choice(choice_and_input)
+  user_choices = get_info_from_api(choice_and_input)
+  print_choice(user_choices)
+end
+
+def get_info_from_api(choice_and_input)
   #make the web request
-  response_string = RestClient.get('http://www.swapi.co/api/people/')
+  response_string = RestClient.get("http://www.swapi.co/api/#{choice_and_input[0]}/")
   response_hash = JSON.parse(response_string)
-  
-  # NOTE: in this demonstration we name many of the variables _hash or _array. 
+
+  # NOTE: in this demonstration we name many of the variables _hash or _array.
   # This is done for educational purposes. This is not typically done in code.
-
-
+  choice_array(response_hash, choice_and_input).map do |url|
+    JSON.parse(RestClient.get(url))
+  end
   # iterate over the response hash to find the collection of `films` for the given
   #   `character`
   # collect those film API urls, make a web request to each URL to get the info
@@ -22,11 +28,26 @@ def get_character_movies_from_api(character)
   #  of movies by title. play around with puts out other info about a given film.
 end
 
-def print_movies(films_hash)
-  # some iteration magic and puts out the movies in a nice list
+def choice_array(response_hash, choice_and_input)
+  choice_array = []
+  response_hash["results"].each do |character_hash|
+    if choice_and_input[0] == "people" && character_hash["name"] == choice_and_input[1]
+      choice_array << character_hash["films"]
+    elsif character_hash["films"].include?(choice_and_input[1])
+      choice_array << character_hash["films"]
+    end
+  end
+  choice_array.flatten!
 end
 
-def show_character_movies(character)
+def print_choice(choice_hash)
+  # some iteration magic and puts out the movies in a nice list
+  choice_hash.each do |film|
+    puts film["title"]
+  end
+end
+
+def show_character_movies(choice_and_input)
   films_array = get_character_movies_from_api(character)
   print_movies(films_array)
 end
