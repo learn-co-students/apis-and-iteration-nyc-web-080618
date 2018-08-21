@@ -53,7 +53,7 @@ def show_character_movies(character)
   films_array = get_character_movies_from_api(character)
   print_movies(films_array)
 end
-
+#commit
 ## BONUS
 
 # that `get_character_movies_from_api` method is probably pretty long. Does it do more than one job?
