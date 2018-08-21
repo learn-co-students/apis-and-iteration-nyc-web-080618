@@ -8,10 +8,11 @@ def get_character_movies_from_api(character)
   response_hash = JSON.parse(response_string)
 
 
+
+
   selected_character = response_hash["results"].find do |char|
     char["name"].downcase == character
   end
-
 
 end
 
